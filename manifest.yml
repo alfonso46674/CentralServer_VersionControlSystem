@@ -1,4 +1,4 @@
 applications:
 - name: VSC_CentralServer
   memory: 128M
-  buildpack: sdk-for-nodejs
+  buildpack: nodejs_buildpack
