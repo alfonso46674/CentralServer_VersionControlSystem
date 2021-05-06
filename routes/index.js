@@ -2,7 +2,7 @@ const router = require('express').Router()
 
 
 router.get('/',(req,res)=>{
-    res.json({message:'Home get message'})
+    res.status(200).send({"Message":"Initial Get"})
 })
 
 module.exports = router
