@@ -1,0 +1,25 @@
+{
+  "name": "VSC_CentralServer",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "Node index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/alfonso46674/CentralServer_VersionControlSystem.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/alfonso46674/CentralServer_VersionControlSystem/issues"
+  },
+  "homepage": "https://github.com/alfonso46674/CentralServer_VersionControlSystem#readme",
+  "dependencies": {
+    "cors": "^2.8.5",
+    "express": "^4.17.1"
+  }
+}
