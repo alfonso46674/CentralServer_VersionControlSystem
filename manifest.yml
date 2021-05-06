@@ -1,4 +1,8 @@
 applications:
-- name: VSC_CentralServer
-  memory: 128M
-  buildpack: nodejs_buildpack
+  - name: VSC_CentralServer
+    buildpacks:
+      - sdk-for-nodejs
+    path: .
+    command: npm run start
+    instances: 1
+    memory: 128M
