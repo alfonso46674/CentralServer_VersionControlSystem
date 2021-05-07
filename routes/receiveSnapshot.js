@@ -39,7 +39,7 @@ router.post('/',(req,res)=>{
     upload(req,res,(err)=>{
         if(err) res.status(400).send('Something went wrong')
         console.log(req.file.path);
-         fs.unlinkSync(req.file.path) // elimina 
+         //fs.unlinkSync(req.file.path) // elimina 
         res.send(req.file)
     })
 })
