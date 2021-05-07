@@ -1,5 +1,6 @@
 const router = require('express').Router()
 
+const globby = require('globby')
 const multer = require('multer')
 const path = require('path')
 const fs = require('fs')
@@ -41,6 +42,17 @@ router.post('/',(req,res)=>{
          fs.unlinkSync(req.file.path) // elimina 
         res.send(req.file)
     })
+})
+
+//shows all of the stored files in /public
+router.get('/', async (req,res)=>{
+    const files = await globby(['**/public/*'])
+    // console.log(files);
+    const filesRenamed = files.map(function(x){
+        return x.replace("public/",'')
+    })
+    // res.send(filesRenamed)
+    res.send({files:filesRenamed})
 })
 
 module.exports = router
