@@ -10,7 +10,7 @@ const router = require('./routes')
 
 const {json,urlencoded} = express
 app.use(json())
-app.use(urlencoded({ extended: false }))
+app.use(urlencoded({ extended: true }))
 const corsOptions = {origin: '*', optionsSuccessStatus:200}
 app.use(cors(corsOptions))
 
