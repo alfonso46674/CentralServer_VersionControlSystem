@@ -15,4 +15,4 @@ COPY . .
 # exponemos el puero
 EXPOSE ${PORT}
 # corremos el comando para nuestra app
-CMD [ "node", "app.js" ]
+CMD [ "node", "index.js" ]
