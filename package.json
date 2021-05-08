@@ -22,7 +22,9 @@
     "node": "10.x || 12.x"
   },
   "dependencies": {
+    "axios": "^0.21.1",
     "cors": "^2.8.5",
+    "dotenv": "^9.0.0",
     "express": "^4.17.1",
     "globby": "^11.0.3",
     "jest": "^26.6.3",
