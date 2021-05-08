@@ -1,3 +1,6 @@
+const cfenv = require('cfenv')
 const {app,PORT} = require('./app')
 
-app.listen((process.env.PORT || PORT),()=>{console.log(`Server on port ${PORT}`)})
+const appEnv = cfenv.getAppEnv()
+
+app.listen(appEnv.port,appEnv.bind,()=>{console.log(`Server on ${appEnv.url}`)})
