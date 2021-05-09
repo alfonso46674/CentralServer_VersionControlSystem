@@ -4,6 +4,7 @@ const globby = require('globby')
 const multer = require('multer')
 const path = require('path')
 const fs = require('fs')
+const { default: axios } = require('axios')
 
 const storage = multer.diskStorage({
     destination: path.join(__dirname,'../public'),
@@ -36,11 +37,20 @@ const storage = multer.diskStorage({
 
 
 router.post('/',(req,res)=>{
-    upload(req,res,(err)=>{
+    upload(req,res,async (err)=>{
         if(err) res.status(400).send('Something went wrong')
-        console.log(req.file.path);
-         //fs.unlinkSync(req.file.path) // elimina 
-        res.send(req.file)
+        //obtain a S3 presignedUrl to save the zip file there
+        let preSignedUrl = await axios.get(process.env.S3_PRESIGN_API_GATEWAY_URL+'?fileName='+req.file.filename)
+        // console.log(preSignedUrl.data);
+        //store the file in S3
+        let result = await axios.put(preSignedUrl.data, req.file.path)
+        fs.unlinkSync(req.file.path) // delete file
+        if(result.status != 200){
+            res.status(400).send({'Error':'Error while uploading file to S3 bucket'})
+        }
+        else{
+            res.status(200).send({'Sucess':'File uploaded to S3 bucket'})
+        }
     })
 })
 
