@@ -48,7 +48,7 @@ router.post('/',(req,res)=>{
                 //obtain a S3 presignedUrl to save the zip file there
                 let preSignedUrl = await axios.get(process.env.API_GATEWAY_URL+'/s3url?fileName='+req.file.filename)
                 //store the file in S3
-                let resultS3 = await axios.put(preSignedUrl.data, req.file.path)
+                let resultS3 = await axios.put(preSignedUrl.data, fs.readFileSync(req.file.path))
                 // console.log(preSignedUrl.data);
 
                 //split the preSignedUrl.data to obtain the initial url address that contains the bucket name
