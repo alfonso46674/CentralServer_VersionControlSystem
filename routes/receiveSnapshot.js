@@ -39,18 +39,61 @@ const storage = multer.diskStorage({
 router.post('/',(req,res)=>{
     upload(req,res,async (err)=>{
         if(err) res.status(400).send('Something went wrong')
-        //obtain a S3 presignedUrl to save the zip file there
-        let preSignedUrl = await axios.get(process.env.S3_PRESIGN_API_GATEWAY_URL+'?fileName='+req.file.filename)
-        // console.log(preSignedUrl.data);
-        //store the file in S3
-        let result = await axios.put(preSignedUrl.data, req.file.path)
-        fs.unlinkSync(req.file.path) // delete file
-        if(result.status != 200){
-            res.status(400).send({'Error':'Error while uploading file to S3 bucket'})
+        
+        //check that the provided ticket id exists
+        try {
+            let result = await axios.get(process.env.API_GATEWAY_URL+'/conseguirticketid?id='+req.body.ticket_id)
+
+            if(result.data[0].id == req.body.ticket_id){
+                //obtain a S3 presignedUrl to save the zip file there
+                let preSignedUrl = await axios.get(process.env.API_GATEWAY_URL+'/s3url?fileName='+req.file.filename)
+                //store the file in S3
+                let resultS3 = await axios.put(preSignedUrl.data, req.file.path)
+                // console.log(preSignedUrl.data);
+
+                //split the preSignedUrl.data to obtain the initial url address that contains the bucket name
+                let bucketLocation = preSignedUrl.data.split('.com')[0]
+                //Create the S3 url of the stored object
+                let S3url = `${bucketLocation}.com/${req.file.filename}`
+                //update the ticket with the new attached files, a ticket must be passed, but only with the id and the parameters to update
+                let ticketToUpdate = {
+                    "ticket": {
+                        "id": req.body.ticket_id,
+                        "summary": "",
+                        "email": "",
+                        "date": "",
+                        "description": "",
+                        "assignedDev2": "",
+                        "assignedDev3": "",
+                        "attachedFiles": S3url
+                    }
+                }
+                let updatedTicket = await axios.put(process.env.API_GATEWAY_URL+'/updateticket',ticketToUpdate)
+
+                // console.log(result);
+                fs.unlinkSync(req.file.path) // delete file
+                if(resultS3.status != 200){
+                    res.status(400).send({'Error':'Error while uploading file to S3 bucket'})
+                }
+                else{
+                    res.status(200).send({
+                    'ticketStatus':`Attached files for ticket:${req.body.ticket_id} uploaded to ${updatedTicket.data.attachedFiles}`
+                    })
+                }
+
+
+            } else {
+                fs.unlinkSync(req.file.path) // delete file
+                res.status(400).send({'Error':'Provided ticket id does not exist'})    
+            }
+            
+        } catch (error) {
+            // console.log(error.data);
+            fs.unlinkSync(req.file.path) // delete file
+            res.status(400).send({'Error':'Provided ticket id does not exist'})
         }
-        else{
-            res.status(200).send({'Sucess':'File uploaded to S3 bucket'})
-        }
+        
+        
     })
 })
 
